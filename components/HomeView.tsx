@@ -343,13 +343,13 @@ const SkyContent: React.FC<{ state: CelestialState }> = ({ state }) => {
   const moonPhaseText = useMemo(() => {
     const prog = ((state.moonOrbitProgress % 1) + 1) % 1;
     if (prog < 0.03 || prog > 0.97) return "삭 (New Moon)";
-    if (prog >= 0.03 && prog < 0.22) return "그믐달 (Waning Crescent)";
-    if (prog >= 0.22 && prog < 0.28) return "하현달 (Last Quarter)";
-    if (prog >= 0.28 && prog < 0.47) return "하현망 (Waning Gibbous)";
+    if (prog >= 0.03 && prog < 0.22) return "초승달 (Waxing Crescent)";
+    if (prog >= 0.22 && prog < 0.28) return "상현달 (First Quarter)";
+    if (prog >= 0.28 && prog < 0.47) return "상현망 (Waxing Gibbous)";
     if (prog >= 0.47 && prog < 0.53) return "보름달 (Full Moon)";
-    if (prog >= 0.53 && prog < 0.72) return "상현망 (Waxing Gibbous)";
-    if (prog >= 0.72 && prog < 0.78) return "상현달 (First Quarter)";
-    if (prog >= 0.78 && prog < 0.97) return "초승달 (Waxing Crescent)";
+    if (prog >= 0.53 && prog < 0.72) return "하현망 (Waning Gibbous)";
+    if (prog >= 0.72 && prog < 0.78) return "하현달 (Last Quarter)";
+    if (prog >= 0.78 && prog < 0.97) return "그믐달 (Waning Crescent)";
     return "";
   }, [state.moonOrbitProgress]);
 
@@ -443,20 +443,20 @@ const SkyContent: React.FC<{ state: CelestialState }> = ({ state }) => {
 
               {/* 반달 효과 - 상현달과 하현달 */}
               {(() => {
-                // 하현달 (Last Quarter) - 22~28%
+                // 상현달 (First Quarter) - 22~28% (오른쪽 반달)
                 if (prog >= 0.22 && prog < 0.28) {
                   return (
-                    <mesh position={[-9, 0, 0]}>
-                      <sphereGeometry args={[18, 32, 32, 0, Math.PI]} />
+                    <mesh position={[9, 0, 0]}>
+                      <sphereGeometry args={[18, 32, 32, Math.PI, Math.PI]} />
                       <meshBasicMaterial color="#000000" side={2} />
                     </mesh>
                   );
                 }
-                // 상현달 (First Quarter) - 72~78%
+                // 하현달 (Last Quarter) - 72~78% (왼쪽 반달)
                 if (prog >= 0.72 && prog < 0.78) {
                   return (
-                    <mesh position={[9, 0, 0]}>
-                      <sphereGeometry args={[18, 32, 32, Math.PI, Math.PI]} />
+                    <mesh position={[-9, 0, 0]}>
+                      <sphereGeometry args={[18, 32, 32, 0, Math.PI]} />
                       <meshBasicMaterial color="#000000" side={2} />
                     </mesh>
                   );

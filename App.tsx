@@ -133,13 +133,13 @@ const App: React.FC = () => {
   const moonPhaseName = useMemo(() => {
     const p = ((celestialState.moonOrbitProgress % 1) + 1) % 1;
     if (p < 0.03 || p > 0.97) return "삭 (New Moon)";
-    if (p >= 0.03 && p < 0.22) return "그믐달 (Waning Crescent)";
-    if (p >= 0.22 && p < 0.28) return "하현달 (Last Quarter)";
-    if (p >= 0.28 && p < 0.47) return "하현망 (Waning Gibbous)";
+    if (p >= 0.03 && p < 0.22) return "초승달 (Waxing Crescent)";
+    if (p >= 0.22 && p < 0.28) return "상현달 (First Quarter)";
+    if (p >= 0.28 && p < 0.47) return "상현망 (Waxing Gibbous)";
     if (p >= 0.47 && p < 0.53) return "보름달 (Full Moon)";
-    if (p >= 0.53 && p < 0.72) return "상현망 (Waxing Gibbous)";
-    if (p >= 0.72 && p < 0.78) return "상현달 (First Quarter)";
-    if (p >= 0.78 && p < 0.97) return "초승달 (Waxing Crescent)";
+    if (p >= 0.53 && p < 0.72) return "하현망 (Waning Gibbous)";
+    if (p >= 0.72 && p < 0.78) return "하현달 (Last Quarter)";
+    if (p >= 0.78 && p < 0.97) return "그믐달 (Waning Crescent)";
     return "달의 위상이 변화 중입니다";
   }, [celestialState.moonOrbitProgress]);
 
