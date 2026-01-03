@@ -410,39 +410,52 @@ const SkyContent: React.FC<{ state: CelestialState }> = ({ state }) => {
       </group>
 
       <group position={moonPos}>
-        <mesh ref={moonRef} castShadow receiveShadow>
-          <sphereGeometry args={[18, 512, 512]} />
-          <meshStandardMaterial
-            color="#ffffff"
-            roughness={1.0}
-            metalness={0}
-            emissive="#111"
-            emissiveIntensity={0.1}
-          />
-        </mesh>
-
-        {/* 반달 효과 - 상현달과 하현달 */}
         {(() => {
           const prog = ((state.moonOrbitProgress % 1) + 1) % 1;
-          // 하현달 (Last Quarter) - 22~28%
-          if (prog >= 0.22 && prog < 0.28) {
-            return (
-              <mesh position={[-9, 0, 0]}>
-                <sphereGeometry args={[18, 32, 32, 0, Math.PI]} />
-                <meshBasicMaterial color="#000000" side={2} />
-              </mesh>
-            );
+          // 삭 (New Moon) - 달이 보이지 않음
+          const isNewMoon = prog < 0.03 || prog > 0.97;
+
+          if (isNewMoon) {
+            return null; // 삭일 때는 달을 표시하지 않음
           }
-          // 상현달 (First Quarter) - 72~78%
-          if (prog >= 0.72 && prog < 0.78) {
-            return (
-              <mesh position={[9, 0, 0]}>
-                <sphereGeometry args={[18, 32, 32, Math.PI, Math.PI]} />
-                <meshBasicMaterial color="#000000" side={2} />
+
+          return (
+            <>
+              <mesh ref={moonRef} castShadow receiveShadow>
+                <sphereGeometry args={[18, 512, 512]} />
+                <meshStandardMaterial
+                  color="#ffffff"
+                  roughness={1.0}
+                  metalness={0}
+                  emissive="#111"
+                  emissiveIntensity={0.1}
+                />
               </mesh>
-            );
-          }
-          return null;
+
+              {/* 반달 효과 - 상현달과 하현달 */}
+              {(() => {
+                // 하현달 (Last Quarter) - 22~28%
+                if (prog >= 0.22 && prog < 0.28) {
+                  return (
+                    <mesh position={[-9, 0, 0]}>
+                      <sphereGeometry args={[18, 32, 32, 0, Math.PI]} />
+                      <meshBasicMaterial color="#000000" side={2} />
+                    </mesh>
+                  );
+                }
+                // 상현달 (First Quarter) - 72~78%
+                if (prog >= 0.72 && prog < 0.78) {
+                  return (
+                    <mesh position={[9, 0, 0]}>
+                      <sphereGeometry args={[18, 32, 32, Math.PI, Math.PI]} />
+                      <meshBasicMaterial color="#000000" side={2} />
+                    </mesh>
+                  );
+                }
+                return null;
+              })()}
+            </>
+          );
         })()}
 
         <directionalLight
