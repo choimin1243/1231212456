@@ -416,7 +416,16 @@ const SkyContent: React.FC<{ state: CelestialState }> = ({ state }) => {
           const isNewMoon = prog < 0.03 || prog > 0.97;
 
           if (isNewMoon) {
-            return null; // 삭일 때는 달을 표시하지 않음
+            // 삭일 때는 아무것도 표시하지 않음 (달, 조명, 텍스트 모두 숨김)
+            return (
+              <>
+                <mesh ref={moonRef} visible={false}>
+                  <sphereGeometry args={[18, 512, 512]} />
+                  <meshStandardMaterial color="#ffffff" />
+                </mesh>
+                <directionalLight ref={moonLightRef} intensity={0} />
+              </>
+            );
           }
 
           return (
@@ -454,27 +463,27 @@ const SkyContent: React.FC<{ state: CelestialState }> = ({ state }) => {
                 }
                 return null;
               })()}
+
+              <directionalLight
+                ref={moonLightRef}
+                intensity={20}
+                color="#ffffff"
+              />
+
+              {moonPhaseText !== "" && (
+                <Text
+                  position={[0, 50, 0]}
+                  fontSize={isMobile ? 22 : 16}
+                  color="#ffffcc"
+                  outlineWidth={0.5}
+                  outlineColor="#000000"
+                >
+                  {moonPhaseText}
+                </Text>
+              )}
             </>
           );
         })()}
-
-        <directionalLight
-          ref={moonLightRef}
-          intensity={20}
-          color="#ffffff"
-        />
-
-        {moonPhaseText !== "" && (
-          <Text
-            position={[0, 50, 0]}
-            fontSize={isMobile ? 22 : 16}
-            color="#ffffcc"
-            outlineWidth={0.5}
-            outlineColor="#000000"
-          >
-            {moonPhaseText}
-          </Text>
-        )}
       </group>
     </group>
   );
