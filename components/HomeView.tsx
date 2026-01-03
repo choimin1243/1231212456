@@ -358,13 +358,15 @@ const SkyContent: React.FC<{ state: CelestialState }> = ({ state }) => {
   useFrame(() => {
     if (moonLightRef.current && moonRef.current) {
       const p = ((state.moonOrbitProgress % 1) + 1) % 1;
-      const sunToMoonDir = new THREE.Vector3().subVectors(sunPos, moonPos).normalize();
-      let finalLightPos = sunToMoonDir.clone().multiplyScalar(100);
+      // 달에서 태양으로 향하는 방향
+      const moonToSunDir = new THREE.Vector3().subVectors(sunPos, moonPos).normalize();
+      // 조명 위치: 달의 태양쪽에 배치 (태양에서 달을 비추도록)
+      const worldMoonPos = moonRef.current.getWorldPosition(new THREE.Vector3());
+      let finalLightPos = worldMoonPos.clone().add(moonToSunDir.clone().multiplyScalar(100));
 
       const distFromNew = Math.min(p, 1 - p);
-      
+
       if (distFromNew < 0.25) {
-        const worldMoonPos = moonRef.current.getWorldPosition(new THREE.Vector3());
         const camToMoon = new THREE.Vector3().subVectors(worldMoonPos, camera.position).normalize();
         const thinningPower = Math.pow(1 - (distFromNew / 0.25), 0.6);
         const pushScale = 1.15 * thinningPower;
