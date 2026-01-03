@@ -414,19 +414,43 @@ const SkyContent: React.FC<{ state: CelestialState }> = ({ state }) => {
           const prog = ((state.moonOrbitProgress % 1) + 1) % 1;
           const hour = state.time;
 
-          // 삭 (New Moon) - 달이 보이지 않음
-          const isNewMoon = prog < 0.03 || prog > 0.97;
+          // 각 달의 위상별 가시 시간 설정
+          let isVisible = true;
 
-          // 초승달 (Waxing Crescent) - 18시~24시(0시)에만 보임
-          const isWaxingCrescent = prog >= 0.03 && prog < 0.22;
-          const isWaxingCrescentVisible = isWaxingCrescent && hour >= 18 && hour < 24;
+          // 삭 (New Moon) - 관측 불가
+          if (prog < 0.03 || prog > 0.97) {
+            isVisible = false;
+          }
+          // 초승달 (Waxing Crescent) - 18:00~21:00 (해 진 직후 저녁 서쪽 하늘)
+          else if (prog >= 0.03 && prog < 0.22) {
+            isVisible = hour >= 18 && hour < 21;
+          }
+          // 상현달 (First Quarter) - 12:00~24:00 (낮부터 떠서 자정까지)
+          else if (prog >= 0.22 && prog < 0.28) {
+            isVisible = hour >= 12 || hour < 0;
+          }
+          // 상현망 (Waxing Gibbous) - 제한 없음 (보름달로 가는 중)
+          else if (prog >= 0.28 && prog < 0.47) {
+            isVisible = true;
+          }
+          // 보름달 (Full Moon) - 18:00~06:00 (밤새도록)
+          else if (prog >= 0.47 && prog < 0.53) {
+            isVisible = hour >= 18 || hour < 6;
+          }
+          // 하현망 (Waning Gibbous) - 제한 없음 (하현달로 가는 중)
+          else if (prog >= 0.53 && prog < 0.72) {
+            isVisible = true;
+          }
+          // 하현달 (Last Quarter) - 00:00~12:00 (자정부터 낮까지)
+          else if (prog >= 0.72 && prog < 0.78) {
+            isVisible = hour >= 0 && hour < 12;
+          }
+          // 그믐달 (Waning Crescent) - 03:00~06:00 (새벽녘 동쪽 하늘)
+          else if (prog >= 0.78 && prog < 0.97) {
+            isVisible = hour >= 3 && hour < 6;
+          }
 
-          // 상현달 (First Quarter) - 12시~24시(0시)에만 보임 (18시에 남쪽)
-          const isFirstQuarter = prog >= 0.22 && prog < 0.28;
-          const isFirstQuarterVisible = isFirstQuarter && hour >= 12 && hour < 24;
-
-          if (isNewMoon || (isWaxingCrescent && !isWaxingCrescentVisible) || (isFirstQuarter && !isFirstQuarterVisible)) {
-            // 삭이거나 초승달/상현달 시간대가 아니면 숨김
+          if (!isVisible) {
             return (
               <>
                 <mesh ref={moonRef} visible={false}>
