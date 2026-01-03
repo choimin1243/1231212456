@@ -412,16 +412,21 @@ const SkyContent: React.FC<{ state: CelestialState }> = ({ state }) => {
       <group position={moonPos}>
         {(() => {
           const prog = ((state.moonOrbitProgress % 1) + 1) % 1;
+          const hour = state.time;
+
           // 삭 (New Moon) - 달이 보이지 않음
           const isNewMoon = prog < 0.03 || prog > 0.97;
 
           // 초승달 (Waxing Crescent) - 18시~24시(0시)에만 보임
           const isWaxingCrescent = prog >= 0.03 && prog < 0.22;
-          const hour = state.time;
           const isWaxingCrescentVisible = isWaxingCrescent && hour >= 18 && hour < 24;
 
-          if (isNewMoon || (isWaxingCrescent && !isWaxingCrescentVisible)) {
-            // 삭이거나 초승달 시간대가 아니면 숨김
+          // 상현달 (First Quarter) - 12시~24시(0시)에만 보임 (18시에 남쪽)
+          const isFirstQuarter = prog >= 0.22 && prog < 0.28;
+          const isFirstQuarterVisible = isFirstQuarter && hour >= 12 && hour < 24;
+
+          if (isNewMoon || (isWaxingCrescent && !isWaxingCrescentVisible) || (isFirstQuarter && !isFirstQuarterVisible)) {
+            // 삭이거나 초승달/상현달 시간대가 아니면 숨김
             return (
               <>
                 <mesh ref={moonRef} visible={false}>
