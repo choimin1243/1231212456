@@ -415,8 +415,13 @@ const SkyContent: React.FC<{ state: CelestialState }> = ({ state }) => {
           // 삭 (New Moon) - 달이 보이지 않음
           const isNewMoon = prog < 0.03 || prog > 0.97;
 
-          if (isNewMoon) {
-            // 삭일 때는 아무것도 표시하지 않음 (달, 조명, 텍스트 모두 숨김)
+          // 초승달 (Waxing Crescent) - 18시~24시(0시)에만 보임
+          const isWaxingCrescent = prog >= 0.03 && prog < 0.22;
+          const hour = state.time;
+          const isWaxingCrescentVisible = isWaxingCrescent && hour >= 18 && hour < 24;
+
+          if (isNewMoon || (isWaxingCrescent && !isWaxingCrescentVisible)) {
+            // 삭이거나 초승달 시간대가 아니면 숨김
             return (
               <>
                 <mesh ref={moonRef} visible={false}>
@@ -441,10 +446,28 @@ const SkyContent: React.FC<{ state: CelestialState }> = ({ state }) => {
                 />
               </mesh>
 
-              {/* 반달 효과 - 상현달과 하현달 */}
+              {/* 달 모양 효과 */}
               {(() => {
-                // 상현달 (First Quarter) - 22~28% (오른쪽 반달)
+                // 초승달 (Waxing Crescent) - 3~22% (오른쪽이 약간 밝음)
+                if (prog >= 0.03 && prog < 0.22) {
+                  return (
+                    <mesh position={[-13, 0, 0]}>
+                      <sphereGeometry args={[18, 32, 32, 0, Math.PI]} />
+                      <meshBasicMaterial color="#000000" side={2} />
+                    </mesh>
+                  );
+                }
+                // 상현달 (First Quarter) - 22~28% (오른쪽이 밝은 달 - 왼쪽을 가림)
                 if (prog >= 0.22 && prog < 0.28) {
+                  return (
+                    <mesh position={[-9, 0, 0]}>
+                      <sphereGeometry args={[18, 32, 32, 0, Math.PI]} />
+                      <meshBasicMaterial color="#000000" side={2} />
+                    </mesh>
+                  );
+                }
+                // 하현달 (Last Quarter) - 72~78% (왼쪽이 밝은 달 - 오른쪽을 가림)
+                if (prog >= 0.72 && prog < 0.78) {
                   return (
                     <mesh position={[9, 0, 0]}>
                       <sphereGeometry args={[18, 32, 32, Math.PI, Math.PI]} />
@@ -452,11 +475,11 @@ const SkyContent: React.FC<{ state: CelestialState }> = ({ state }) => {
                     </mesh>
                   );
                 }
-                // 하현달 (Last Quarter) - 72~78% (왼쪽 반달)
-                if (prog >= 0.72 && prog < 0.78) {
+                // 그믐달 (Waning Crescent) - 78~97% (왼쪽이 약간 밝음)
+                if (prog >= 0.78 && prog < 0.97) {
                   return (
-                    <mesh position={[-9, 0, 0]}>
-                      <sphereGeometry args={[18, 32, 32, 0, Math.PI]} />
+                    <mesh position={[13, 0, 0]}>
+                      <sphereGeometry args={[18, 32, 32, Math.PI, Math.PI]} />
                       <meshBasicMaterial color="#000000" side={2} />
                     </mesh>
                   );
