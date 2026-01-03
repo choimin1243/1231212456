@@ -321,15 +321,17 @@ const SkyContent: React.FC<{ state: CelestialState }> = ({ state }) => {
   const radius = 600; 
   const isMobile = viewport.width < 5;
   
-  const sunAzimuth = (state.time - 12) * (Math.PI / 12);
-  const sunX = Math.sin(sunAzimuth) * radius; 
+  // 태양 위치: 동(6시) → 남(12시) → 서(18시)
+  const sunAzimuth = -(state.time - 12) * (Math.PI / 12);
+  const sunX = Math.sin(sunAzimuth) * radius;
   const sunZ = -Math.cos(sunAzimuth) * radius;
-  const sunY = Math.cos(sunAzimuth) * 350; 
+  const sunY = Math.cos(sunAzimuth) * 350;
   const sunPos = useMemo(() => new THREE.Vector3(sunX, sunY, sunZ), [sunX, sunY, sunZ]);
 
+  // 달 위치: 태양 기준 공전 (초승달은 태양보다 천구상 동쪽)
   const moonOrbitAngle = state.moonOrbitProgress * Math.PI * 2;
-  const moonAzimuth = sunAzimuth + moonOrbitAngle; 
-  
+  const moonAzimuth = sunAzimuth + moonOrbitAngle;
+
   const moonX = Math.sin(moonAzimuth) * (radius - 50);
   const moonZ = -Math.cos(moonAzimuth) * (radius - 50);
   const moonY = Math.cos(moonAzimuth) * 280 + 50;
