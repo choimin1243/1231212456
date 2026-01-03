@@ -1,0 +1,5 @@
+{
+  "name": "Celestial Explorer: Home & Universe",
+  "description": "A dual-view 3D application using Three.js to visualize the astronomical relationship between Earth, Moon, and Sun, viewing from both a window at home and outer space.",
+  "requestFramePermissions": []
+}
